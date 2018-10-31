@@ -1,4 +1,4 @@
-# hashchecker
+# HashChecker
 Keeps an eye on my ETH miner hash rate using ethermine.org; resets if hash rate falls below threshold.
 
 Download binary for Windows or Linux in Releases.
