@@ -179,7 +179,7 @@ func startMiner() {
 		cmd := exec.Command("cmd", "/C", "start", "cmd", "/C", "start-miner.lnk") // FTW Winbloze
 		cmd.Start()                                                               // Fork miner
 	} else {
-		cmd := exec.Command("bash", "-c", "./start-miner.sh").CombinedOutput()
+		cmd := exec.Command("bash", "-c", "./start-miner.sh")
 		cmd.Start() // Fork miner
 	}
 	time.Sleep(600 * time.Second) // Wait 10 minutes for status to populate on pool
