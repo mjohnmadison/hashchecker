@@ -46,11 +46,11 @@ func main() {
 	retry := 1       // Set initial retry
 	wt := os.Args[1] // Your wallet address.
 	er := os.Args[2] // Expected reported hashrate of the miner.
-	url := "https://api.ethermine.org/miner/" + wt + "/currentStats"
-	cur := currentHashRate(url)
-	hr, _ := strconv.Atoi(er) // Convert Expected hashrate into int
-	// Compare actual hashrate from the pool and what your miner should be getting
-	for { // Start the loop
+	for {            // Start the loop
+		url := "https://api.ethermine.org/miner/" + wt + "/currentStats"
+		cur := currentHashRate(url)
+		hr, _ := strconv.Atoi(er) // Convert Expected hashrate into int
+		// Compare actual hashrate from the pool and what your miner should be getting
 		if !checkHashRate(cur, hr) {
 			fixMiner(retry)
 			retry++
@@ -176,10 +176,11 @@ func killMiner() {
 func startMiner() {
 	fmt.Println("Starting Miner")
 	if runtime.GOOS == "windows" {
-		cmd := exec.Command("cmd", "/C", "start", "cmd", "/C", "ping -t 10.10.10.1") // FTW Winbloze
-		cmd.Start()                                                                  // Fork miner in Wandoze
+		cmd := exec.Command("cmd", "/C", "start", "cmd", "/C", "start-miner.lnk") // FTW Winbloze
+		cmd.Start()                                                               // Fork miner
 	} else {
-		exec.Command("bash", "-c", "./start-miner.sh").CombinedOutput()
+		cmd := exec.Command("bash", "-c", "./start-miner.sh").CombinedOutput()
+		cmd.Start() // Fork miner
 	}
 	time.Sleep(600 * time.Second) // Wait 10 minutes for status to populate on pool
 }
