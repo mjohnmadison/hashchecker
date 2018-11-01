@@ -7,7 +7,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -68,25 +67,25 @@ func currentHashRate(url string) int {
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	req.Header.Set("User-Agent", "Mozilla")
 
 	res, getErr := webClient.Do(req)
 	if getErr != nil {
-		log.Fatal(getErr)
+		log.Println(getErr)
 	}
 
 	body, readErr := ioutil.ReadAll(res.Body)
 	if readErr != nil {
-		log.Fatal(readErr)
+		log.Println(readErr)
 	}
 
 	hashrate := hash{}
 	jsonErr := json.Unmarshal(body, &hashrate)
 	if jsonErr != nil {
-		log.Fatal(jsonErr)
+		log.Println(jsonErr)
 	}
 
 	return hashrate.Data.ReportedHashrate / 1000000
@@ -105,27 +104,26 @@ func fixMiner(retry int) {
 	if retry > 3 {
 		reboot()
 	}
-	fmt.Println("Fixing Miner")
 	if runtime.GOOS == "windows" {
-		fmt.Println("Fixing for Windows")
+		color.Yellow("Fixing miner")
 		if !minerRunningWin() {
 			startMiner()
 			retry++
 		} else {
 			// Restart it and add to retry var
-			fmt.Println("Restarting Miner")
+			color.Yellow("Restarting Miner")
 			killMiner()
 			startMiner()
 			retry++
 		}
 	} else if runtime.GOOS == "linux" {
-		fmt.Println("Fixing for Linux")
+		color.Yellow("Fixing miner")
 		if !minerRunningLin() {
 			startMiner()
 			retry++
 		} else {
 			// Restart it and add to retry var
-			fmt.Println("Restarting Miner")
+			color.Yellow("Restarting Miner")
 			killMiner()
 			startMiner()
 			retry++
@@ -139,11 +137,11 @@ func minerRunningWin() bool {
 	// For now, we make it janky
 	p, err := exec.Command("cmd.exe", "/C", "tasklist").Output()
 	if err != nil {
-		log.Fatal("EXEC ERROR:", err)
+		log.Println("EXEC ERROR:", err)
 	}
 	pid := strings.TrimSpace(string(p))
 	if strings.Contains(pid, "EthDcrMiner") {
-		fmt.Println("Miner is running")
+		color.Green("Miner is running")
 		return true
 	}
 	return false
@@ -153,11 +151,11 @@ func minerRunningLin() bool {
 	cmd := "ps aux | grep EthDcrMiner | wc -l"
 	p, err := exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
-		log.Fatal("EXEC ERROR:", err)
+		log.Println("EXEC ERROR:", err)
 	}
 	pid, _ := strconv.Atoi(strings.TrimSpace(string(p)))
 	if pid > 0 {
-		fmt.Println("Miner is running")
+		color.Green("Miner is running")
 		return true
 	}
 	return false
@@ -174,7 +172,7 @@ func killMiner() {
 }
 
 func startMiner() {
-	fmt.Println("Starting Miner")
+	color.Green("Starting Miner")
 	if runtime.GOOS == "windows" {
 		cmd := exec.Command("cmd", "/C", "start", "cmd", "/C", "start-miner.lnk") // FTW Winbloze
 		cmd.Start()                                                               // Fork miner
@@ -186,7 +184,7 @@ func startMiner() {
 }
 
 func reboot() {
-	fmt.Println("Rebooting Machine; too many failures in a row")
+	color.Red("Rebooting Machine; too many failures in a row")
 	if runtime.GOOS == "windows" {
 		exec.Command("cmd", "/C", "shutdown /r /t 00").CombinedOutput() // Bye Winders
 	} else {
