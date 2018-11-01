@@ -22,3 +22,4 @@ This keeps my miner running itself, start your miner on boot along with this scr
 
 # TODO:
 - Add a check for internet connection. I've had it just reboot every 30 minutes until my internet came back. Probably should just wait and check network again.
+- Log to a file, winblows doesn't have a huge buffer to scroll back on
