@@ -1,6 +1,6 @@
 package main
 
-// Version: 1.3
+// Version: 1.4
 // Script to check hashrate of miner and reset if it falls below expected hashrate
 // Script will kill and restart the miner a few times and recheck hashrate
 // If hashrate continues to be low, it will restart the computer
