@@ -1,7 +1,7 @@
 # HashChecker
 Keeps an eye on my ETH miner hash rate using ethermine.org and Claymore Miner; resets if reported hash rate falls below threshold. Drivers crash, crap happens and sometimes you need some maintenance on your rig.
 
-Download pre-compiled binary for Windows or Linux in Releases.
+Download pre-compiled binary for Windows or Linux in https://github.com/mjohnmadison/hashchecker/releases
 
 ### Usage
 ```
