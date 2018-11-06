@@ -138,15 +138,12 @@ func minerRunning() bool {
 func minerRunningWin() bool {
 	c := color.New(color.FgGreen, color.Bold)
 	r := color.New(color.FgRed, color.Bold)
-	// Windows sucks, need to find a better way to run a pipe command or get this working:
-	// tasklist | find /I /C "EthDcrMiner" -- this would spit out number of those prcesses as int
-	// For now, we make it janky
-	p, err := exec.Command("cmd.exe", "/C", "tasklist").Output()
+	cmd := "powershell Get-Process EthDcrMiner* -ErrorAction SilentlyContinue"
+	out, err := exec.Command("cmd", "/C", cmd).Output()
 	if err != nil {
-		log.Println("EXEC ERROR:", err)
+		log.Printf("Failed to execute command: %s \n Error: %s", cmd, err)
 	}
-	pid := strings.TrimSpace(string(p))
-	if strings.Contains(pid, "EthDcrMiner") {
+	if string(out) != "" {
 		c.Printf("Miner running: ")
 		return true
 	}
@@ -160,7 +157,7 @@ func minerRunningLin() bool {
 	cmd := "ps aux | grep [E]thDcrMiner | wc -l" // Regex to eliminate the grep returning the grep command.
 	p, err := exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
-		log.Println("EXEC ERROR:", err)
+		log.Printf("Failed to execute command: %s \n Error: %s", cmd, err)
 	}
 	pid, _ := strconv.Atoi(strings.TrimSpace(string(p)))
 	if pid > 0 {
@@ -185,8 +182,8 @@ func startMiner() {
 	c := color.New(color.FgCyan, color.Bold)
 	c.Printf("Starting Miner... ")
 	if runtime.GOOS == "windows" {
-		cmd := exec.Command("cmd", "/C", "start", "cmd", "/C", "start-miner.lnk") // FTW Winbloze
-		cmd.Start()                                                               // Fork miner
+		cmd := "powershell start-process start-miner.bat"
+		exec.Command("cmd", "/C", cmd).Output()
 	} else { // Linux
 		cmd := exec.Command("bash", "-c", "./start-miner.sh")
 		cmd.Start() // Fork miner
